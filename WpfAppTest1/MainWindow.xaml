@@ -1,0 +1,101 @@
+﻿<Window x:Class="WpfAppTest1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAppTest1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="800">
+    <!-- обьявляем ресурсы ктороыре будут использоватся в текущем окне -->
+    <Window.Resources>
+        <!-- создаем кисть с красным цветом и присваиваем ей имя RedColor -->
+        <SolidColorBrush x:Key="RedColor" Color="Red"></SolidColorBrush>
+        <!-- создаем градинет от синего до белого и присваиваем ему имя gradientStyle-->
+        <LinearGradientBrush x:Key="gradientStyle" StartPoint="0.5,1" EndPoint="0.5,0">
+            <GradientStop Color="LightBlue" Offset="0" />
+            <GradientStop Color="White" Offset="1" />
+        </LinearGradientBrush>
+    </Window.Resources>
+    <!-- атрибут ShowGridLines хадает видимость сетки -->
+    <Grid x:Name="layoutGrid" ShowGridLines="True">
+        <!-- строки -->
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="20 px" />
+            <RowDefinition Height="2 in" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!-- столбцы -->
+        <Grid.ColumnDefinitions>
+            <!-- если размер *, то элмент будет занимтаь все оставшееся место -->
+            <ColumnDefinition Width="*" />
+            <!-- это будет половина размера стандартного окна будь у него * -->
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="1*">
+            </ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <!--кнопка бужет рапороложена в 3 столбце 3 сторке, Grid.ColumnSpan="3" обьединить 3 столбца -->
+        <Button Grid.Column="0" Grid.Row="3" x:Name="button1" Grid.ColumnSpan="3" Content="Обединение всех столбцов"
+                Click="btnClick" />
+        <Button Grid.Column="0" Grid.Row="0" x:Name="button2" Content="Обединение всех столбцов" Click="btnClick" />
+        <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" x:Name="tBoxName" Text="Текстовое поле" />
+        <UniformGrid Grid.Row="3">
+            <Button Content="Left Top" />
+            <Button Content="Right Top" />
+            <Button Content="Left Bottom" />
+            <Button Content="Right Bottom" />
+        </UniformGrid>
+        <!-- распологается в ячейке слева от разделителя  -->
+        <Button Grid.Row="1" Grid.Column="0" Content="Левая кнопка" />
+        <!-- распологается посередине относительлно кнопок -->
+        <GridSplitter Grid.Row="1" Grid.Column="1" ShowsPreview="False" Width="100"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+        <!-- распологается в ячейке справа от разделителя -->
+        <Button Grid.Row="1" Grid.Column="2" Content="Правая кнопка" />
+        <GridSplitter Grid.Row="1" Grid.Column="1" ShowsPreview="False" Width="100"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+        <GridSplitter Grid.Row="2" Grid.Column="0" ShowsPreview="False"
+                      Height="10" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.ColumnSpan="3" />
+        <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="3" Grid.Column="2">
+            <!-- пример использования чтобы вызвать ресур в элементне нужновызвать - "{StaticResource gradientStyle}" -->
+            <Button Background="{StaticResource gradientStyle}" MinWidth="200" Content="1" />
+            <Button Background="{StaticResource RedColor}" Content="2" />
+            <Button Background="Red" Content="3" />
+        </StackPanel>
+        <DockPanel Visibility="Visible" Grid.Row="4" LastChildFill="False" Background="Aqua">
+            <!-- прижимается к верхней стороне докпанели -->
+            <Button DockPanel.Dock="Top" Content="Top"  Background="Brown"/>
+            <!-- остальные действую аналогично верхней -->
+            <Button DockPanel.Dock="Left" Content="Left"/>
+            <Button DockPanel.Dock="Bottom" Content="Bot" Background="Brown"/>
+            <Button DockPanel.Dock="Right" Content="Right"/>
+            <Button Content="Centre"/>
+        </DockPanel>
+        <Canvas Grid.Row="4" Grid.Column="1">
+        <WrapPanel Canvas.Top="10" Canvas.Left="40"  Orientation="Vertical">
+            <Button Background="AliceBlue" Content="Кнопка 1" />
+            <Button Background="Blue" Content="Кнопка 2" />
+            <Button Background="Aquamarine" Content="Кнопка 3" Height="30"/>
+            <Button Background="DarkGreen" Content="Кнопка 4" Height="90"/>
+            <Button Background="LightGreen" Content="Кнопка 5"/>
+            <Button Background="RosyBrown" Content="Кнопка 6" Width="90" />
+            <Button Background="GhostWhite" Content="Кнопка 7" />
+        </WrapPanel>
+        </Canvas> 
+        <Button Grid.Row="4" Grid.Column="2"  Content="нижняя" Width="60"  Panel.ZIndex="-1"  Height="30" Margin ="15 10 0 0"
+                HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <Button Grid.Row="4" Grid.Column="2"  Content="верхняя" Width="60" Panel.ZIndex="0" Height="30" Margin ="20 10 0 0"
+                HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <Button Grid.Row="4" Grid.Column="2"  Content="самая верхняя" Width="60" Panel.ZIndex="1" Height="30" Margin ="20 10 0 0"
+                HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <StackPanel Grid.Row="4" Grid.Column="2" Margin="70 50 0 0">
+            <RadioButton GroupName="Languages" Content="C#" IsChecked="True" />
+            <RadioButton GroupName="Languages" Content="VB.NET" />
+            <RadioButton GroupName="Languages" Content="C++" />
+        </StackPanel>
+       
+    </Grid>
+
+</Window>
