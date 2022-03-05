@@ -8,6 +8,9 @@
         Title="MainWindow" Height="800" Width="800">
     <!-- обьявляем ресурсы ктороыре будут использоватся в текущем окне -->
     <Window.Resources>
+        <!-- после добавления его в ресурсы можно привязать кнопку к нему -->
+        <local:Phone x:Key="MyPhone" Name="Xiaomi" Price="180"/>
+        <local:Phone x:Key="MyNewPhone" Price="180"/>
         <!-- создаем кисть с красным цветом и присваиваем ей имя RedColor -->
         <SolidColorBrush x:Key="RedColor" Color="Red"></SolidColorBrush>
         <!-- создаем градинет от синего до белого и присваиваем ему имя gradientStyle-->
@@ -15,9 +18,11 @@
             <GradientStop Color="LightBlue" Offset="0" />
             <GradientStop Color="White" Offset="1" />
         </LinearGradientBrush>
+        <SolidColorBrush Color="LightGray" x:Key="buttonBrush" />
     </Window.Resources>
     <!-- атрибут ShowGridLines хадает видимость сетки -->
-    <Grid x:Name="layoutGrid" ShowGridLines="True">
+    
+    <Grid x:Name="layoutGrid" Background="RosyBrown" ShowGridLines="True">
         <!-- строки -->
         <Grid.RowDefinitions>
 
@@ -36,40 +41,57 @@
             <ColumnDefinition Width="1*">
             </ColumnDefinition>
         </Grid.ColumnDefinitions>
+        <UniformGrid Grid.Row="3">
         <!--кнопка бужет рапороложена в 3 столбце 3 сторке, Grid.ColumnSpan="3" обьединить 3 столбца -->
         <Button Grid.Column="0" Grid.Row="3" x:Name="button1" Grid.ColumnSpan="3" Content="Обединение всех столбцов"
                 Click="btnClick" />
         <Button Grid.Column="0" Grid.Row="0" x:Name="button2" Content="Обединение всех столбцов" Click="btnClick" />
-        <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" x:Name="tBoxName" Text="Текстовое поле" />
-        <UniformGrid Grid.Row="3">
-            <Button Content="Left Top" />
-            <Button Content="Right Top" />
-            <Button Content="Left Bottom" />
-            <Button Content="Right Bottom" />
         </UniformGrid>
+        <!-- обьект приемника одключил Explicit и значит его изменнеи обновит обьект приенкиа только выовом метода-->
+        <TextBox Grid.Column="1" Grid.Row="0"  x:Name="tBoxName" Text="{Binding StringFormat={}{0}k,Source={StaticResource MyPhone}, Path=Name, UpdateSourceTrigger=Explicit}" />
+        <!-- обьект источника изменится тлолько если будет вызван метод  -->
+        <TextBox Grid.Column="2" Grid.Row="0"  x:Name="tBoxName1" Text="Текстовое"/>
+        <!-- в конетейнере обьявлили дата контескт на ресур класса телефон -->
+        <UniformGrid DataContext="{DynamicResource MyPhone}"  Grid.Row="3">
+            <!-- теперь внутр контейнера можно в уопрощенном виде обращатся к полям класса телефон -->
+            <Button Content="{Binding Price}" />
+            <Button Content="{Binding Name}" />
+            <Button Content="Left Bottom" />
+            <TextBox Text="{Binding StringFormat={}{0} Hello, Path=Name}"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Columns="2"  Grid.Row="1">
         <!-- распологается в ячейке слева от разделителя  -->
-        <Button Grid.Row="1" Grid.Column="0" Content="Левая кнопка" />
+        <!-- кнопка будет привязана к свойству ресурса Phone.Name -->
+        <Button Grid.Row="1" Name="leftBtn"   Grid.Column="0" Content="{Binding Source={StaticResource MyPhone}, Path=Name}" ContentStringFormat="KK {0} ll" Click="LeftBtn_OnClick"/>
+        <Button Grid.Row="1" Name="leftBtn2"  Grid.Column="0" Content="{Binding Source={StaticResource MyNewPhone}, Path=Name, TargetNullValue=Текст по умолчанию}" Click="LeftBtn_OnClick"/>
+        </UniformGrid>
+        
+        <TextBox Grid.Row="3" Grid.Column="1" Background="{DynamicResource RedColor}" Text="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Background, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
         <!-- распологается посередине относительлно кнопок -->
         <GridSplitter Grid.Row="1" Grid.Column="1" ShowsPreview="False" Width="100"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" />
         <!-- распологается в ячейке справа от разделителя -->
-        <Button Grid.Row="1" Grid.Column="2" Content="Правая кнопка" />
+        <!-- обьект применика -->
+        <Button Grid.Row="1" Name="rightBtn" Grid.Column="2" Content="{Binding ElementName=tBoxName,Path=Text}" />
         <GridSplitter Grid.Row="1" Grid.Column="1" ShowsPreview="False" Width="100"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" />
         <GridSplitter Grid.Row="2" Grid.Column="0" ShowsPreview="False"
                       Height="10" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.ColumnSpan="3" />
         <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="3" Grid.Column="2">
             <!-- пример использования чтобы вызвать ресур в элементне нужновызвать - "{StaticResource gradientStyle}" -->
-            <Button Background="{StaticResource gradientStyle}" MinWidth="200" Content="1" />
-            <Button Background="{StaticResource RedColor}" Content="2" />
-            <Button Background="Red" Content="3" />
+            <Button Background="{StaticResource gradientStyle}" MinWidth="200" Content="1" Click="ButtonBase_OnClick"/>
+            <Button Background="{DynamicResource RedColor}" Content="2" Click="ButtonBase_OnClick"/>
+            <Button Background="{StaticResource RedColor}" Content="3"  Click="ButtonBase_OnClick"/>
+            <!-- привязка содержимого тектбоска к цвету контейнера в ктотром эот бокс находится те к гриду -->
+            <TextBox Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}, Path=Background}" ></TextBox>
         </StackPanel>
-        <DockPanel Visibility="Visible" Grid.Row="4" LastChildFill="False" Background="Aqua">
+        <DockPanel Visibility="Visible" Grid.Row="4" LastChildFill="True" Background="Aqua">
             <!-- прижимается к верхней стороне докпанели -->
-            <Button DockPanel.Dock="Top" Content="Top"  Background="Brown"/>
+            <Button DockPanel.Dock="Top" Content="Top"  Background="Brown" />
+            <Button DockPanel.Dock="Bottom" Content="Bot" Background="Brown"/>
             <!-- остальные действую аналогично верхней -->
             <Button DockPanel.Dock="Left" Content="Left"/>
-            <Button DockPanel.Dock="Bottom" Content="Bot" Background="Brown"/>
             <Button DockPanel.Dock="Right" Content="Right"/>
             <Button Content="Centre"/>
         </DockPanel>
